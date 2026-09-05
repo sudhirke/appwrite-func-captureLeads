@@ -1,4 +1,4 @@
-import { Client, Databases } from 'node-appwrite';
+import { Client, Functions, Databases } from 'node-appwrite';
 
 export default async ({ req, res, log, error }) => {
   const client = new Client()
@@ -26,10 +26,12 @@ export default async ({ req, res, log, error }) => {
     }
   } else if (req.method === 'GET') {
     try {
-      const response = await databases.listDocuments(
-        process.env.APPWRITE_DATABASE_ID,
-        process.env.APPWRITE_COLLECTION_ID
-      );
+      const functions = new Functions(client);
+
+      const response = await functions.listVariables({
+        functionId: '6a9bc956003d71d42a92',
+      });
+
       return res.json({ success: true, data: response.documents });
     } catch (err) {
       error('Error fetching documents:', err);
