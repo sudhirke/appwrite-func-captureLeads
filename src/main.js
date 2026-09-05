@@ -1,20 +1,26 @@
-import { Client, Functions, Databases } from 'node-appwrite';
+import { Client, Functions, TablesDB, ID } from 'node-appwrite';
 
 export default async ({ req, res, log, error }) => {
   const client = new Client()
     .setEndpoint(process.env.APPWRITE_FUNCTION_API_ENDPOINT)
     .setProject(process.env.APPWRITE_FUNCTION_PROJECT_ID)
-    .setKey(process.env.APPWRITE_API_KEY);
+    .setKey(req.headers['x-appwrite-key'] || process.env.APPWRITE_API_KEY);
 
   // Initialize the Databases service
-  const databases = new Databases(client);
+  const tablesDB = new TablesDB(client);
 
   // Handle POST request to create a new document in the Appwrite database
   if (req.method === 'POST') {
     try {
+      log('Received POST request with key:', req.headers['x-appwrite-key']);
       const data = req.body;
 
-      return res.json({ success: true, data: data });
+      await tablesDB.createRow({
+        databaseId: process.env.APPWRITE_DATABASE_ID,
+        tableId: process.env.APPWRITE_COLLECTION_ID,
+        rowId: ID.unique(),
+        data: data,
+      });
     } catch (err) {
       error('Error creating document:', err);
       return res.status(500).json({ success: false, error: err.message });
