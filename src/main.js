@@ -13,13 +13,8 @@ export default async ({ req, res, log, error }) => {
   if (req.method === 'POST') {
     try {
       const data = req.body;
-      const response = await databases.createDocument(
-        process.env.APPWRITE_DATABASE_ID,
-        process.env.APPWRITE_COLLECTION_ID,
-        'unique()', // Unique ID for the document
-        data
-      );
-      return res.json({ success: true, data: response });
+
+      return res.json({ success: true, data: data });
     } catch (err) {
       error('Error creating document:', err);
       return res.status(500).json({ success: false, error: err.message });
@@ -32,7 +27,9 @@ export default async ({ req, res, log, error }) => {
         functionId: '6a9bc956003d71d42a92',
       });
 
-      return res.json({ success: true, data: response.documents });
+      log('Fetched documents:', response);
+
+      return res.json({ success: true, data: response });
     } catch (err) {
       error('Error fetching documents:', err);
       return res.status(500).json({ success: false, error: err.message });
