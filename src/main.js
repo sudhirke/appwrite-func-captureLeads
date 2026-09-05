@@ -10,7 +10,7 @@ export default async ({ req, res, log, error }) => {
   const databases = new Databases(client);
 
   // Handle POST request to create a new document in the Appwrite database
-  if (req.method == 'POST') {
+  if (req.method === 'POST') {
     try {
       const data = req.body;
 
@@ -19,27 +19,22 @@ export default async ({ req, res, log, error }) => {
       error('Error creating document:', err);
       return res.status(500).json({ success: false, error: err.message });
     }
-  } else if (req.method == 'GET') {
-    try {
-      const functions = new Functions(client);
-
-      const response = await functions.listVariables({
-        functionId: '6a9bc956003d71d42a92',
-      });
-
-      context.log('Fetched documents:', response);
-
-      return res.json({ success: true, data: response });
-    } catch (err) {
-      error('Error fetching documents:', err);
-      return res.status(500).json({ success: false, error: err.message });
-    }
-  } else {
-    return res
-      .status(405)
-      .json({ success: false, error: 'Method Not Allowed' });
   }
 
-  //Default response to the / endpoint
-  return res.send('SPXPERT Lead Capture Function');
+  if (req.method === 'GET') {
+    // The req object contains the request data
+    if (req.path === '/vars') {
+      try {
+        const functions = new Functions(client);
+
+        const response = await functions.listVariables({
+          functionId: '6a9bc956003d71d42a92',
+        });
+        return res.json({ success: true, data: response });
+      } catch (err) {
+        error('Error fetching documents:', err);
+        return res.status(500).json({ success: false, error: err.message });
+      }
+    }
+  }
 };
