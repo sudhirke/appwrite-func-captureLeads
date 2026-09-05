@@ -10,7 +10,7 @@ export default async ({ req, res, log, error }) => {
   const databases = new Databases(client);
 
   // Handle POST request to create a new document in the Appwrite database
-  if (req.method === 'POST') {
+  if (req.method == 'POST') {
     try {
       const data = req.body;
 
@@ -19,7 +19,7 @@ export default async ({ req, res, log, error }) => {
       error('Error creating document:', err);
       return res.status(500).json({ success: false, error: err.message });
     }
-  } else if (req.method === 'GET') {
+  } else if (req.method == 'GET') {
     try {
       const functions = new Functions(client);
 
@@ -27,7 +27,7 @@ export default async ({ req, res, log, error }) => {
         functionId: '6a9bc956003d71d42a92',
       });
 
-      log('Fetched documents:', response);
+      context.log('Fetched documents:', response);
 
       return res.json({ success: true, data: response });
     } catch (err) {
